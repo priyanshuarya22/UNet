@@ -2,6 +2,7 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 from . import db
 
+
 class User(db.model):
     id = db.Column(db.Integer, primary_key=True, auto_increment=True)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -35,7 +36,6 @@ class Course(db.model):
     description = db.Column(db.String)
     enrollments = db.relationship('Enrollment')
     instructors = db.relationship('Instructor')
-
 
 
 class Enrollment(db.model):

@@ -10,11 +10,16 @@ class User(db.model):
     lastName = db.Column(db.String)
     pno = db.Column(db.String)
     email = db.Column(db.String)
+    roles = db.relationship('Role_user')
+    enrollments = db.relationship('Enrollment')
+    instructors = db.relationship('Instructors')
+    leaves = db.relationship('Leave')
 
 
 class Role(db.model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
+    roles = db.relationship('Role_user')
 
 
 class Role_user(db.model):
@@ -28,6 +33,9 @@ class Course(db.model):
     code = db.Column(db.String, unique=True, nullable=False)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
+    enrollments = db.relationship('Enrollment')
+    instructors = db.relationship('Instructor')
+
 
 
 class Enrollment(db.model):

@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 from sqlalchemy.sql import func
-
+from . import db
 
 class User(db.model):
     id = db.Column(db.Integer, primary_key=True, auto_increment=True)
@@ -32,20 +32,20 @@ class Course(db.model):
 
 class Enrollment(db.model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('User.id'))
-    course_id = db.Column(db.Integer, db.ForeignKey('Course.id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
 
 
 class Instructor(db.model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('User.id'))
-    course_id = db.Column(db.Integer, db.ForeignKey('Course.id'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
 
 
 class Leave(db.model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     from_date = db.Column(db.DateTime, nullable=False)
     to_date = db.Column(db.DateTime, nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     reason = db.Column(db.String)
     status = db.Column(db.String)

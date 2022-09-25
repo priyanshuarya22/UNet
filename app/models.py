@@ -1,5 +1,7 @@
 from flask_login import UserMixin
 from sqlalchemy.sql import func
+
+
 class User(db.model):
     id = db.Column(db.Integer, primary_key=True, auto_increment=True)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -9,14 +11,17 @@ class User(db.model):
     pno = db.Column(db.String)
     email = db.Column(db.String)
 
+
 class Role(db.model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
+
 
 class Role_user(db.model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+
 
 class Course(db.model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -24,3 +29,23 @@ class Course(db.model):
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
 
+
+class Enrollment(db.model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('Course.id'))
+
+
+class Instructor(db.model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('Course.id'))
+
+
+class Leave(db.model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    from_date = db.Column(db.DateTime, nullable=False)
+    to_date = db.Column(db.DateTime, nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    reason = db.Column(db.String)
+    status = db.Column(db.String)

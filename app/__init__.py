@@ -13,3 +13,5 @@ key = arg
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = key
+    app.config['SQLAlCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    db.init_app(app)

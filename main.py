@@ -1,10 +1,11 @@
-from flask import Blueprint
+from flask import Blueprint, redirect
 from flask import Flask
 import sys
+from app import create_app
 
-app = Flask(__name__)
-main = Blueprint('main', __name__)
+app = create_app()
 arg = {'secretKey': sys.argv[1], 'databasePassword': sys.argv[2]}
 
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

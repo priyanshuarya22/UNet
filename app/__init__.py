@@ -5,7 +5,6 @@ from flask_login import LoginManager
 import os
 from run import arg
 
-DB_NAME = "DtBEsm4DXK"
 db = SQLAlchemy()
 key = arg
 
@@ -13,7 +12,8 @@ key = arg
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = key
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://DtBEsm4DXK:' + key['databasePassword'] + '@remotemysql.com:3306' \
+                                                                                              '/DtBEsm4DXK '
     db.init_app(app)
 
     from .auth import auth as auth_blueprint

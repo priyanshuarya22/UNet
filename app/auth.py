@@ -11,4 +11,6 @@ def login():
     username =  request.form.get('username')
     password = request.form.get('password')
 
+    return render_template('index.html')
+
 

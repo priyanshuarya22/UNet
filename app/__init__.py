@@ -11,7 +11,7 @@ key = arg
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = key
+    app.config['SECRET_KEY'] = key['secretKey']
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://DtBEsm4DXK:' + key['databasePassword'] + '@remotemysql.com:3306' \
                                                                                               '/DtBEsm4DXK '
     db.init_app(app)

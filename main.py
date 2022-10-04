@@ -1,7 +1,9 @@
+from flask import Blueprint
 from flask import Flask
 import sys
 
 app = Flask(__name__)
+main = Blueprint('main',__name__)
 arg = sys.argv[1]
 
 

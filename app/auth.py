@@ -7,7 +7,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 auth = Blueprint('auth', __name__)
 
 
-@auth.route('/', method=['POST'])
+@auth.route('/', method=['POST', 'GET'])
 def login():
     username = request.form.get('username')
     password = request.form.get('password')

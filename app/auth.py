@@ -6,14 +6,12 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
 
+
 @auth.route('/', method=['POST'])
 def login():
-    username =  request.form.get('username')
+    username = request.form.get('username')
     password = request.form.get('password')
 
-    user=User.query.filter_by(username=username).first()
-
+    user = User.query.filter_by(username=username).first()
 
     return render_template('index.html')
-
-

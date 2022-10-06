@@ -1,6 +1,6 @@
 import os
 
-
+DB_NAME = 'database.db'
 class Config():
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = None
@@ -8,7 +8,8 @@ class Config():
 
 
 class LocalDevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql://DtBEsm4DXK:' + str(os.getenv('databasePassword', default=None)) + '@remotemysql.com:3306/DtBEsm4DXK'
+    # SQLALCHEMY_DATABASE_URI = 'mysql://DtBEsm4DXK:' + str(os.getenv('databasePassword', default=None)) + '@remotemysql.com:3306/DtBEsm4DXK'
+    SQLALCHEMY_DATABASE_URI = f'sqlite:///{DB_NAME}'
     DEBUG = True
     SECRET_KEY = os.getenv('secretKey', default=None)
     SECURITY_PASSWORD_HASH = "bcrypt"

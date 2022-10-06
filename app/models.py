@@ -1,56 +1,51 @@
-from flask_login import UserMixin
-from sqlalchemy.sql import func
-from . import db
+from .database import db
+from flask_security import UserMixin, RoleMixin
+
+roles_users = db.Table('roles_users',
+                       db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+                       db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
 
-class User(db.model):
-    id = db.Column(db.Integer, primary_key=True, auto_increment=True)
+class User(db.Model, UserMixin):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     firstName = db.Column(db.String, nullable=False)
     lastName = db.Column(db.String)
     pno = db.Column(db.String)
     email = db.Column(db.String)
-    roles = db.relationship('Role_user')
-    enrollments = db.relationship('Enrollment')
-    instructors = db.relationship('Instructors')
+    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+    enrollments = db.relationship('Course', secondary='enrollment')
+    instructors = db.relationship('Course', secondary='instructor')
     leaves = db.relationship('Leave')
 
 
-class Role(db.model):
+class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    roles = db.relationship('Role_user')
 
 
-class Role_user(db.model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
-
-
-class Course(db.model):
+class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.String, unique=True, nullable=False)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
-    enrollments = db.relationship('Enrollment')
-    instructors = db.relationship('Instructor')
 
 
-class Enrollment(db.model):
+class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
 
 
-class Instructor(db.model):
+class Instructor(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
 
 
-class Leave(db.model):
+class Leave(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     from_date = db.Column(db.DateTime, nullable=False)
     to_date = db.Column(db.DateTime, nullable=False)

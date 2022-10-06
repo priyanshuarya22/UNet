@@ -1,11 +1,25 @@
-from flask import Blueprint, redirect
 from flask import Flask
-import sys
-from app import create_app
+from app.database import db
+from flask_security import Security, SQLAlchemySessionUserDatastore
+from app.models import User, Role
+from app.config import LocalDevelopmentConfig
+
+app = None
+
+
+def create_app():
+    app = Flask(__name__, template_folder="templates")
+    app.config.from_object(LocalDevelopmentConfig)
+    db.init_app(app)
+    app.app_context().push()
+    user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
+    security = Security(app, user_datastore)
+    return app
+
 
 app = create_app()
-arg = {'secretKey': sys.argv[1], 'databasePassword': sys.argv[2]}
 
+from app.controllers import *
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

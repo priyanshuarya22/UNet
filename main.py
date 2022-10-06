@@ -15,16 +15,7 @@ def create_app():
     app.config.from_object(LocalDevelopmentConfig)
     db.init_app(app)
     app.app_context().push()
-    user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
-    security = Security(app, user_datastore)
-    create_database(app)
-
     return app
-
-
-def create_database(app):
-    if not path.exists('app/' + DB_NAME):
-        db.create_all(app=app)
 
 
 app = create_app()

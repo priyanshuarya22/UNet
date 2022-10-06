@@ -1,12 +1,7 @@
 from .database import db
-from flask_security import UserMixin, RoleMixin
-
-roles_users = db.Table('roles_users',
-                       db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-                       db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -15,17 +10,23 @@ class User(db.Model, UserMixin):
     lastName = db.Column(db.String)
     pno = db.Column(db.String)
     email = db.Column(db.String)
-    active = db.Column(db.String)
-    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+    roles = db.relationship('Role', secondary='user_role')
     enrollments = db.relationship('Course', secondary='enrollment')
     instructors = db.relationship('Course', secondary='instructor')
     leaves = db.relationship('Leave')
 
 
-class Role(db.Model, RoleMixin):
+class Role(db.Model):
     __tablename__ = 'role'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
+
+
+class UserRole(db.Model):
+    __tablename__ = 'user_role'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    role_id = db.Column(db.Integer, db.ForeignKey(Role.id))
 
 
 class Course(db.Model):

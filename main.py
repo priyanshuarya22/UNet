@@ -14,6 +14,8 @@ def create_app():
     app = Flask(__name__, template_folder="templates")
     app.config.from_object(LocalDevelopmentConfig)
     db.init_app(app)
+    app.config["SESSION_PERMANENT"] = False
+    app.config["SESSION_TYPE"] = "filesystem"
     app.app_context().push()
     return app
 
@@ -23,4 +25,4 @@ app = create_app()
 from app.controllers import *
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0')

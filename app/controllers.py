@@ -2,16 +2,16 @@ import os
 from werkzeug.security import generate_password_hash
 from app.database import db
 from app.models import *
+from flask import render_template, request, redirect, session
 from main import app
-from flask import render_template, request, redirect, url_for, flash
+from flask_session import Session
 import bcrypt
 
 
 def login_required(func):
-    global currentUser
 
     def wrapper():
-        if currentUser is None:
+        if session.get('user', None) is None:
             return redirect("/login")
         return func()
 
@@ -21,13 +21,11 @@ def login_required(func):
 @app.route('/', methods=['GET'])
 @login_required
 def index():
-    global currentUser
-    return render_template('index.html', user=currentUser.username)
+    return render_template('index.html', user=session['user'])
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global currentUser
     if request.method == 'GET':
         return render_template('login.html')
     if request.method == 'POST':
@@ -38,16 +36,14 @@ def login():
         byteCheckPwt = str(user.password).encode('utf-8')
         check = bcrypt.checkpw(bytePwt, byteCheckPwt)
         if check:
-            currentUser = user
+            session['user'] = user.username
             return redirect("/")
         else:
-            print(user)
             return redirect("/login")
 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    global currentUser
     if request.method == 'GET':
         return render_template('signup.html')
     if request.method == 'POST':
@@ -68,8 +64,5 @@ def signup():
         userRole = UserRole(user_id=user.id, role_id=roleObj.id)
         db.session.add(userRole)
         db.session.commit()
-        currentUser = user
+        session['user'] = user.username
         return redirect("/")
-
-
-currentUser = None

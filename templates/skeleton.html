@@ -1,0 +1,38 @@
+<html lang="en">
+<head><title></title>
+</head>
+<body>
+
+<div class="top-nav">
+    <div class="logo">LOGO</div>
+    <a href="#">CURRENT TAB</a>
+    <div class="dropdown">
+        <button class="dropbtn">
+        DP BUTTON
+        </button>
+        <div class="dropdown-content">
+            <a href="#">DP 1</a>
+            <a href="#">DP 2</a>
+        </div>
+    </div>
+</div>
+
+<div class="side-nav">
+    <a href="#"></a>
+    <a href="#"></a>
+    <a href="#"></a>
+    <a href="#"></a>
+    <a href="#"></a>
+    <a href="#"></a>
+</div>
+
+</body>
+<script>
+    document.getElementsByClassName("dropbtn").addEventListner("click",drop);
+
+    function drop(){
+        document.getElementsByClassName("dropdown-content").style.display = "block";
+    }
+
+</script>
+</html>

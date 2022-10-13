@@ -1,0 +1,17 @@
+{% extends 'base_student.html' %}
+
+{% block content %}
+<form action="">
+    <legend>
+        Out Pass Application
+    </legend>
+
+    <label for="checkout">Check Out Date</label>
+    <input type="date" name="checkout">
+    <label for="checkin">Check In Date</label>
+    <input type="date" name="checkin"><br><br>
+    <label for="reason" name="reason">Reason for availing Out Pass</label><br>
+    <textarea type="textarea" name="reason" rows="8" cols="50"></textarea>
+</form>
+
+{% endlbock %}

@@ -57,6 +57,12 @@ def login():
 # ----------------- Teacher --------------------
 
 
+@app.route('/teacher', methods=['GET'])
+def teacher_dash():
+    if request.method == 'GET':
+        user_id = session['id']
+        instructors = Instructor.query.filter_by(teacher_id=user_id).all()
+
 # ----------------- Student --------------------
 
 @app.route('/student', methods=['GET'])

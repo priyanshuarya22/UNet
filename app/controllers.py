@@ -86,6 +86,13 @@ def student_leave():
         user_id = session['id']
         return render_template('leave.html', user_id=user_id)
 
+@app.route('/assignment', methods=['GET','POST'])
+def student_assignment():
+    if request.method == 'GET':
+        user_id = session['id']
+
+        return render_template('assignment.html', user_id=user_id)
+
 
 
 # ----------------- Course ---------------------

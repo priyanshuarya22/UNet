@@ -7,15 +7,16 @@ from main import app
 from flask_session import Session
 import bcrypt
 
+
 # ------------ Decorators ---------------
 def login_required(func):
-
     def wrapper():
         if session.get('username', None) is None:
             return redirect("/")
         return func()
 
     return wrapper
+
 
 # -------------- Login ----------------------
 
@@ -35,6 +36,7 @@ def login():
             userRole = UserRole.query.filter_by(user_id=user.id).first()
             role = Role.query.filter_by(id=userRole.role_id).first()
             session['role'] = role.name
+            session['id'] = user.id
             if role.name == 'admin':
                 return redirect('/admin')
             elif role.name == 'teacher':
@@ -57,7 +59,30 @@ def login():
 
 # ----------------- Student --------------------
 
+@app.route('/student', methods=['GET'])
+def student_dash():
+    if request.method == 'GET':
+        user_id = session['id']
+        enrollments = Enrollment.query.filter_by(student_id=user_id).all()
+        courseList = []
+        for enrollment in enrollments:
+            course = Course.query.filter_by(id=enrollment.course_id).first()
+            courseList.append(course)
+        return render_template('student_dash.html', user_id=user_id, courseList=courseList)
 
+
+@app.route('/leave', methods=['GET', 'POST'])
+def student_leave():
+    if request.method == 'GET':
+        return render_template('leave.html')
+
+    if request.method == 'POST':
+        user_id = session['id']
+        return render_template('leave.html', user_id=user_id)
+
+
+
+# ----------------- Course ---------------------
 
 
 # ----------------- Warden ---------------------

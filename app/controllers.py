@@ -36,7 +36,7 @@ def login():
             userRole = UserRole.query.filter_by(user_id=user.id).first()
             role = Role.query.filter_by(id=userRole.role_id).first()
             session['role'] = role.name
-            session['id'] = user.id
+            session['userId'] = user.id
             if role.name == 'admin':
                 return redirect('/admin')
             elif role.name == 'teacher':
@@ -60,15 +60,16 @@ def login():
 @app.route('/teacher', methods=['GET'])
 def teacher_dash():
     if request.method == 'GET':
-        user_id = session['id']
+        user_id = session['userId']
         instructors = Instructor.query.filter_by(teacher_id=user_id).all()
 
 # ----------------- Student --------------------
 
+@login_required()
 @app.route('/student', methods=['GET'])
 def student_dash():
     if request.method == 'GET':
-        user_id = session['id']
+        user_id = session['userId']
         enrollments = Enrollment.query.filter_by(student_id=user_id).all()
         courseList = []
         for enrollment in enrollments:
@@ -77,14 +78,24 @@ def student_dash():
         return render_template('student_dash.html', user_id=user_id, courseList=courseList)
 
 
+@login_required()
 @app.route('/leave', methods=['GET', 'POST'])
 def student_leave():
     if request.method == 'GET':
         return render_template('leave.html')
 
     if request.method == 'POST':
-        user_id = session['id']
-        return render_template('leave.html', user_id=user_id)
+        user_id = session['userId']
+        checkin = request.form.get('checkin')
+        checkout = request.form.get('checkout')
+        reason = request.form.get('reason')
+
+        new_leave = Leave(from_date=checkout, to_date=checkin, student_id=user_id, reason=reason, status='Pending')
+        db.session.add(new_leave)
+        db.session.commit()
+
+
+        return render_template('leave_applied.html', user_id=user_id)
 
 @app.route('/assignment', methods=['GET','POST'])
 def student_assignment():

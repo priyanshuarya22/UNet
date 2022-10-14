@@ -1,7 +1,7 @@
 {% extends 'base_student.html' %}
 
 {% block content %}
-<form action="">
+<form action="/leave" method="post">
     <legend>
         Out Pass Application
     </legend>
@@ -12,6 +12,7 @@
     <input type="date" name="checkin"><br><br>
     <label for="reason" name="reason">Reason for availing Out Pass</label><br>
     <textarea type="textarea" name="reason" rows="8" cols="50"></textarea>
+    <input type="submit" value="Submit">
 </form>
 
-{% endlbock %}
+{% endblock %}

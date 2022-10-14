@@ -57,6 +57,7 @@ def login():
 # ----------------- Teacher --------------------
 
 
+@login_required
 @app.route('/teacher', methods=['GET'])
 def teacher_dash():
     if request.method == 'GET':

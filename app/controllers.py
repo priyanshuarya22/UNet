@@ -62,6 +62,14 @@ def teacher_dash():
     if request.method == 'GET':
         user_id = session['id']
         instructors = Instructor.query.filter_by(teacher_id=user_id).all()
+        courseList = []
+        for instructor in instructors:
+            course = Course.query.filter_by(id=instructors.course_id).all()
+            courseList.append(course)
+            return render_template('teacher_dash.html', user_id=user_id, courseList=courseList)
+
+
+
 
 # ----------------- Student --------------------
 

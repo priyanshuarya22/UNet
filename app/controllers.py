@@ -73,7 +73,7 @@ def teacher_dash():
 
 # ----------------- Student --------------------
 
-@login_required()
+@login_required
 @app.route('/student', methods=['GET'])
 def student_dash():
     if request.method == 'GET':
@@ -86,7 +86,7 @@ def student_dash():
         return render_template('student_dash.html', user_id=user_id, courseList=courseList)
 
 
-@login_required()
+@login_required
 @app.route('/leave', methods=['GET', 'POST'])
 def student_leave():
     if request.method == 'GET':

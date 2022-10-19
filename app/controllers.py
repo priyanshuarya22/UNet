@@ -1,5 +1,6 @@
 import os
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 from app.database import db
 from app.models import *
 from flask import render_template, request, redirect, session
@@ -17,6 +18,8 @@ def login_required(func):
         return func()
 
     return wrapper
+
+
 
 
 # -------------- Login ----------------------
@@ -83,7 +86,22 @@ def teacher_dash():
         for instructor in instructors:
             course = Course.query.filter_by(id=instructors.course_id).all()
             courseList.append(course)
-            return render_template('teacher_dash.html', user_id=user_id, courseList=courseList)
+        return render_template('teacher_dash.html', user_id=user_id, courseList=courseList)
+
+
+@login_required
+@app.route('/course_teacher', methods=['POST', 'GET'])
+def teacher_course():
+    if request.method == 'GET':
+        return render_template('teacher_course_view.html')
+
+    if request.method == 'POST':
+        user_id = session['userId']
+        file = request.files['file']
+        file.os.path.join(app.config['Upload_folder'], secure_filename(file.filename))
+        return render_template('teacher_course_view.html')
+
+
 
 
 

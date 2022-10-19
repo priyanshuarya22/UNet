@@ -2,7 +2,6 @@ from flask import Flask
 import os
 from app import models
 from app.database import db
-from flask_security import Security, SQLAlchemySessionUserDatastore
 from app.config import LocalDevelopmentConfig
 from app.models import User, Role
 import pyrebase
@@ -28,7 +27,11 @@ def create_app():
     app.config["SESSION_TYPE"] = "filesystem"
     app.app_context().push()
     return app
-
+def upload_files():
+    Upload_folder = '/path/to/the/uploads'
+    allowed_extensions = {'pdf','jpg','jpeg'}
+    app = Flask(__name__)
+    app.config['Upload_folder'] = Upload_folder
 
 app = create_app()
 firebase = pyrebase.initialize_app(config)

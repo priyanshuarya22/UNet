@@ -1,13 +1,23 @@
 from flask import Flask
-from os import path
+import os
 from app import models
 from app.database import db
 from flask_security import Security, SQLAlchemySessionUserDatastore
 from app.config import LocalDevelopmentConfig
 from app.models import User, Role
+import pyrebase
 
 app = None
 DB_NAME = 'database.db'
+
+config = {
+    "apiKey": str(os.getenv('apiKey', default=None)),
+    "authDomain": str(os.getenv('authDomain', default=None)),
+    "databaseURL": str(os.getenv('databaseURL', default=None)),
+    "projectId": str(os.getenv('projectId', default=None)),
+    "storageBucket": str(os.getenv('storageBucket', default=None)),
+    "messagingSenderId": str(os.getenv('messagingSenderId', default=None))
+}
 
 
 def create_app():
@@ -21,8 +31,10 @@ def create_app():
 
 
 app = create_app()
+firebase = pyrebase.initialize_app(config)
+firebaseDb = firebase.database()
 
 from app.controllers import *
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run()

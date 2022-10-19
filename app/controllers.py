@@ -3,9 +3,10 @@ from werkzeug.security import generate_password_hash
 from app.database import db
 from app.models import *
 from flask import render_template, request, redirect, session
-from main import app
+from main import app, firebaseDb
 from flask_session import Session
 import bcrypt
+import json
 
 
 # ------------ Decorators ---------------
@@ -54,6 +55,21 @@ def login():
 # ----------------- Admin ----------------------
 
 
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    if request.method == 'GET':
+        return render_template('test.html')
+    if request.method == 'POST':
+        title = request.form.get('title')
+        desc = request.form.get('desc')
+        data = {
+            "title": title,
+            "description": desc
+        }
+        firebaseDb.child('noticeBoard').push(json.dumps(data))
+        return render_template('test.html')
+
+
 # ----------------- Teacher --------------------
 
 
@@ -68,6 +84,7 @@ def teacher_dash():
             course = Course.query.filter_by(id=instructors.course_id).all()
             courseList.append(course)
             return render_template('teacher_dash.html', user_id=user_id, courseList=courseList)
+
 
 
 
@@ -106,14 +123,13 @@ def student_leave():
 
         return render_template('leave_applied.html', user_id=user_id)
 
-@app.route('/assignment', methods=['GET','POST'])
+
+@app.route('/assignment', methods=['GET', 'POST'])
 def student_assignment():
     if request.method == 'GET':
         user_id = session['id']
 
         return render_template('assignment.html', user_id=user_id)
-
-
 
 # ----------------- Course ---------------------
 

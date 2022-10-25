@@ -1,8 +1,8 @@
 import os
 
-user = 'DtBEsm4DXK'
+user = 'root'
 password = str(os.getenv('databasePassword', default=None))
-host = 'remotemysql.com'
+host = 'localhost'
 port = 3306
 database = 'DtBEsm4DXK'
 

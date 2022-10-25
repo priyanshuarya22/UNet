@@ -20,8 +20,6 @@ def login_required(func):
     return wrapper
 
 
-
-
 # -------------- Login ----------------------
 
 @app.route('/', methods=['GET', 'POST'])
@@ -102,11 +100,6 @@ def teacher_course():
         return render_template('teacher_course_view.html')
 
 
-
-
-
-
-
 # ----------------- Student --------------------
 
 @login_required
@@ -137,7 +130,6 @@ def student_leave():
         new_leave = Leave(from_date=checkout, to_date=checkin, student_id=user_id, reason=reason, status='Pending')
         db.session.add(new_leave)
         db.session.commit()
-
 
         return render_template('leave_applied.html', user_id=user_id)
 

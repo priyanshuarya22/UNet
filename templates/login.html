@@ -1,18 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
-<form action="/" method="post">
-    <label for="username">Enter username:</label>
-    <input type="text" id="username" name="username">
-    <br><br>
-    <lable for="password">Enter password:</lable>
-    <input type="password" id="password" name="password">
-    <br>{{ error }}<br>
-    <input type="submit" value="Submit">
-</form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block body_style %}"background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72,
+    #a8eb12);"{% endblock %}
+
+{% block body %}
+    <div class="card position-absolute top-50 start-50 translate-middle shadow-lg mb-5 bg-body rounded">
+        <div class="row g-0">
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='My project-1.png') }}"
+                     class="img-fluid rounded-start"
+                     alt="First Page" style="height: 100%;">
+            </div>
+            <div class="col-md-6">
+                <div class="card-body">
+                    <h1 class="card-title text-center mt-5">Login</h1>
+                    <form class="mt-5" action="/" method="post">
+                        <label for="username" class="form-label">Enter username:</label>
+                        <input class="form-control" type="text" id="username" name="username">
+                        <br>
+                        <lable for="password" class="form-label">Enter password:</lable>
+                        <input class="form-control" type="password" id="password" name="password">
+                        <br>{{ error }}<br>
+                        <input class="btn btn-primary" type="submit" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

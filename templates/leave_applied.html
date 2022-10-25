@@ -1,10 +1,10 @@
 {% extends 'base_student.html' %}
 
+{% block title %}Leave Applied{% endblock %}
+
+{% block leave %}btn-dark{% endblock %}
+
 {% block content %}
-
-<h1>Application submitted successfully</h1>
-
-<a href="{{url_for(controllers.student_dash)}}" >Home</a>
-
-
-{% end block %}
+    <h1 class="m-5 text-success">Leave Applied Successfully!</h1>
+    <p class="text-muted m-5">Apply for another <a href="/leave">leave.</a></p>
+{% endblock %}

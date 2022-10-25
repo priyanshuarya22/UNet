@@ -1,18 +1,32 @@
 {% extends 'base_student.html' %}
 
+{% block title %}Leave Application{% endblock %}
+
+{% block leave %}btn-dark{% endblock %}
+
 {% block content %}
-<form action="/leave" method="post">
-    <legend>
-        Out Pass Application
-    </legend>
-
-    <label for="checkout">Check Out Date</label>
-    <input type="date" name="checkout">
-    <label for="checkin">Check In Date</label>
-    <input type="date" name="checkin"><br><br>
-    <label for="reason" name="reason">Reason for availing Out Pass</label><br>
-    <textarea type="textarea" name="reason" rows="8" cols="50"></textarea>
-    <input type="submit" value="Submit">
-</form>
-
+    <div class="container">
+        <div class="row">
+            <h1 class="mt-3">Leave Application</h1>
+        </div>
+        <form action="/leave" method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="checkout" class="form-label">Check Out Date</label>
+                    <input type="date" name="checkout" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="checkin" class="form-label">Check In Date</label>
+                    <input type="date" name="checkin" class="form-control">
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label for="reason" name="reason" class="form-label">Reason for availing Out Pass</label><br>
+                    <textarea type="textarea" name="reason" class="form-control w-100" rows="8"></textarea>
+                </div>
+                <div class="col-md-12 mb-3 clearfix">
+                    <input type="submit" value="Submit" class="btn btn-success float-end">
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock %}

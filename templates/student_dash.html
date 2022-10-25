@@ -1,18 +1,17 @@
-<!Doctype html>
-<html>
-<head>
-    <title>
-        Student DashBoard
-    </title>
-</head>
-<body>
 {% extends 'base_student.html' %}
 
+{% block home %}btn-dark{% endblock %}
+
 {% block content %}
-
-
-
+    <div class="m-3">
+        {% for notice in noticeList %}
+            <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
+                <div class="card-body">
+                    <h1 class="card-title">{{ notice['title'] }}</h1>
+                    <h6 class="card-subtitle mb-2 text-muted">Created On - {{ notice['date_time'] }}</h6>
+                    <p class="card-text">{{ notice['description'] }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
-
-</body>
-</html>

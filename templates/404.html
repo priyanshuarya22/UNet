@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Not Found{% endblock %}
+
+{% block body %}
+    <div class="container position-absolute top-50 start-50 translate-middle">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='404.jpg') }}" width="100%;">
+            </div>
+            <div class="col-md-6">
+                <p class="display-4 mt-5">This page does not exist. Kindly <a
+                        href="/redirect" class="link-danger">go back.</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

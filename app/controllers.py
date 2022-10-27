@@ -105,23 +105,61 @@ def redirector():
 
 # ----------------- Admin ----------------------
 
+@app.route('/admin', methods=['GET'])
+@login_required
+@role_required('admin')
+def admin():
+    firstName = session['firstName']
+    notices = firebaseDb.child('noticeBoard').get()
+    rawNoticeList = notices.val()
+    if rawNoticeList is None:
+        return render_template('admin_dash.html', firstName=firstName, empty=True)
+    noticeList = []
+    for i, j in rawNoticeList.items():
+        k = json.loads(j)
+        k['key'] = i
+        noticeList.append(k)
+    noticeList.reverse()
+    return render_template('admin_dash.html', firstName=firstName, noticeList=noticeList)
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
+
+@app.route('/notice', methods=['GET'])
+@login_required
+@role_required('admin')
+def notice():
+    firstName = session['firstName']
+    return render_template('notice.html', firstName=firstName)
+
+
+@app.route('/notice/create', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def create_notice():
+    firstName = session['firstName']
     if request.method == 'GET':
-        return render_template('test.html')
+        return render_template('create_notice.html', firstName=firstName)
     if request.method == 'POST':
         title = request.form.get('title')
-        desc = request.form.get('desc')
+        description = request.form.get('description')
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
         data = {
             "title": title,
-            "description": desc,
-            "date_time": dt_string
+            "description": description,
+            "creation_date_time": dt_string,
+            "updated_date_time": None
         }
         firebaseDb.child('noticeBoard').push(json.dumps(data))
-        return render_template('test.html')
+        return render_template('notice_success.html', task='Created', firstName=firstName)
+
+
+@app.route('/notice/edit', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def edit_notice():
+    firstName = session['firstName']
+    if request.method == 'GET':
+        return render_template('edit_notice.html')
 
 
 # ----------------- Teacher --------------------
@@ -132,7 +170,16 @@ def test():
 @role_required('teacher')
 def teacher_dash():
     firstName = session['firstName']
-    return render_template('teacher_dash.html', firstName=firstName)
+    notices = firebaseDb.child('noticeBoard').get()
+    rawNoticeList = notices.val()
+    if rawNoticeList is None:
+        return render_template('admin_dash.html', firstName=firstName, empty=True)
+    noticeList = []
+    for i in rawNoticeList.values():
+        j = json.loads(i)
+        noticeList.append(j)
+    noticeList.reverse()
+    return render_template('teacher_dash.html', firstName=firstName, noticeList=noticeList)
     # user_id = session['userId']
     # instructors = Instructor.query.filter_by(teacher_id=user_id).all()
     # courseList = []
@@ -165,12 +212,10 @@ def student_dash():
     firstName = session['firstName']
     notices = firebaseDb.child('noticeBoard').get()
     rawNoticeList = notices.val()
+    if rawNoticeList is None:
+        return render_template('admin_dash.html', firstName=firstName, empty=True)
     noticeList = []
-    k = 0
     for i in rawNoticeList.values():
-        if k == 10:
-            break
-        k += 1
         j = json.loads(i)
         noticeList.append(j)
     noticeList.reverse()
@@ -202,14 +247,14 @@ def student_leave():
         db.session.commit()
         return render_template('leave_applied.html', firstName=firstName)
 
-
-@app.route('/assignment', methods=['GET', 'POST'])
-@role_required('student')
-def student_assignment():
-    if request.method == 'GET':
-        user_id = session['id']
-
-        return render_template('assignment.html', user_id=user_id)
+#
+# @app.route('/assignment', methods=['GET', 'POST'])
+# @role_required('student')
+# def student_assignment():
+#     if request.method == 'GET':
+#         user_id = session['id']
+#
+#         return render_template('assignment.html', user_id=user_id)
 
 # ----------------- Course ---------------------
 

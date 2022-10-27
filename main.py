@@ -29,13 +29,6 @@ def create_app():
     return app
 
 
-def upload_files():
-    Upload_folder = '/path/to/the/uploads'
-    allowed_extensions = {'pdf', 'jpg', 'jpeg'}
-    app = Flask(__name__)
-    app.config['Upload_folder'] = Upload_folder
-
-
 app = create_app()
 firebase = pyrebase.initialize_app(config)
 firebaseDb = firebase.database()

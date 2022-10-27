@@ -4,14 +4,32 @@
 
 {% block content %}
     <div class="m-3">
-        {% for notice in noticeList %}
-            <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
-                <div class="card-body">
-                    <h1 class="card-title">{{ notice['title'] }}</h1>
-                    <h6 class="card-subtitle mb-2 text-muted">Created On - {{ notice['date_time'] }}</h6>
-                    <p class="card-text">{{ notice['description'] }}</p>
+        {% if empty %}
+            <div class="container mt-5 mb-5">
+                <div class="row">
+                    <div class="col-md-9">
+                        <img src="{{ url_for('static', filename='empty.jpg') }}" width="100%;">
+                    </div>
+                    <div class="col-md-3">
+                        <p class="display-4 mt-5">Wait for admin to push some notification.</p>
+                    </div>
                 </div>
             </div>
-        {% endfor %}
+        {% else %}
+            {% for notice in noticeList %}
+                <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
+                    <div class="card-body">
+                        <h1 class="card-title">{{ notice['title'] }}</h1>
+                        {% if notice['updated_date_time'] %}
+                            <h6 class="card-subtitle mb-2 text-muted">Edited On - {{ notice['updated_date_time'] }}</h6>
+                        {% else %}
+                            <h6 class="card-subtitle mb-2 text-muted">Created On
+                                - {{ notice['creation_date_time'] }}</h6>
+                        {% endif %}
+                        <p class="card-text">{{ notice['description'] }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}

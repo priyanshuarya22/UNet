@@ -1,0 +1,40 @@
+{% extends 'base_admin.html' %}
+
+{% block user %}btn-dark{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card" style="width: 100%;">
+                    <img src="{{ url_for('static', filename='add_user.jpg') }}" class="card-img-top" alt="add_user">
+                    <div class="card-body">
+                        <h5 class="card-title">Add User</h5>
+                        <p class="card-text">Click here to add user.</p>
+                        <a href="/user/add" class="btn btn-success float-end">Add</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card" style="width: 100%;">
+                    <img src="{{ url_for('static', filename='edit_user.jpg') }}" class="card-img-top" alt="edit_user">
+                    <div class="card-body">
+                        <h5 class="card-title">Edit User</h5>
+                        <p class="card-text">Click here to edit user.</p>
+                        <a href="/user/edit" class="btn btn-warning float-end">Edit</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card" style="width: 100%;">
+                    <img src="{{ url_for('static', filename='delete_user.jpg') }}" class="card-img-top" alt="delete_user">
+                    <div class="card-body">
+                        <h5 class="card-title">Delete User</h5>
+                        <p class="card-text">Click here to delete user.</p>
+                        <a href="/user/delete" class="btn btn-danger float-end">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

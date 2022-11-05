@@ -180,14 +180,6 @@ def teacher_dash():
         noticeList.append(j)
     noticeList.reverse()
     return render_template('teacher_dash.html', firstName=firstName, noticeList=noticeList)
-    # user_id = session['userId']
-    # instructors = Instructor.query.filter_by(teacher_id=user_id).all()
-    # courseList = []
-    # for instructor in instructors:
-    #     course = Course.query.filter_by(id=instructors.course_id).all()
-    #     courseList.append(course)
-    # return render_template('teacher_dash.html', user_id=user_id, courseList=courseList)
-
 
 @app.route('/course_teacher', methods=['POST', 'GET'])
 @login_required
@@ -220,14 +212,6 @@ def student_dash():
         noticeList.append(j)
     noticeList.reverse()
     return render_template('student_dash.html', firstName=firstName, noticeList=noticeList)
-    # if request.method == 'GET':
-    #     user_id = session['userId']
-    #     enrollments = Enrollment.query.filter_by(student_id=user_id).all()
-    #     courseList = []
-    #     for enrollment in enrollments:
-    #         course = Course.query.filter_by(id=enrollment.course_id).first()
-    #         courseList.append(course)
-    #     return render_template('student_dash.html', user_id=user_id, courseList=courseList)
 
 
 @app.route('/leave', methods=['GET', 'POST'])
@@ -247,14 +231,22 @@ def student_leave():
         db.session.commit()
         return render_template('leave_applied.html', firstName=firstName)
 
-#
-# @app.route('/assignment', methods=['GET', 'POST'])
-# @role_required('student')
-# def student_assignment():
-#     if request.method == 'GET':
-#         user_id = session['id']
-#
-#         return render_template('assignment.html', user_id=user_id)
+@app.route('/student/course', methods=['GET','POST'])
+@login_required
+@role_required('student')
+def student_course():
+    if request.method == 'GET':
+        user_id = session['userId']
+        enrollments = Enrollment.query.filter_by(student_id=user_id).all()
+        courseList = []
+        for enrollment in enrollments:
+            course = Course.query.filter_by(id=enrollment.course_id).all()
+            courseList.append(course)
+        return render_template('student_course_view.html', user_id=user_id, courseList=courseList)
+
+    if request.method == 'POST':
+        user_id = session['user_id']
+
 
 # ----------------- Course ---------------------
 

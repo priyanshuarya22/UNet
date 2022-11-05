@@ -16,10 +16,10 @@ from datetime import datetime
 # ------------ Decorators ---------------
 def login_required(func):
     @wraps(func)
-    def wrapper():
+    def wrapper(*args, **kwargs):
         if session.get('username', None) is None:
             return redirect("/401")
-        return func()
+        return func(*args, **kwargs)
 
     return wrapper
 
@@ -30,7 +30,7 @@ def role_required(role):
         def wrapper(*args, **kwargs):
             if session.get('role', None) != role:
                 return redirect("/403")
-            return func()
+            return func(*args, **kwargs)
 
         return wrapper
 
@@ -128,38 +128,78 @@ def admin():
 @role_required('admin')
 def notice():
     firstName = session['firstName']
-    return render_template('notice.html', firstName=firstName)
+    return render_template('create_notice.html', firstName=firstName)
 
 
-@app.route('/notice/create', methods=['GET', 'POST'])
+@app.route('/notice/create', methods=['POST'])
 @login_required
 @role_required('admin')
 def create_notice():
     firstName = session['firstName']
+    title = request.form.get('title')
+    description = request.form.get('description')
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    data = {
+        "title": title,
+        "description": description,
+        "creation_date_time": dt_string,
+        "updated_date_time": None
+    }
+    firebaseDb.child('noticeBoard').push(json.dumps(data))
+    return render_template('notice_success.html', task='Created', firstName=firstName)
+
+
+@app.route('/notice/edit/<string:key>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def edit_notice(key):
+    firstName = session['firstName']
+    rawData1 = firebaseDb.child('noticeBoard').child(key).get()
+    rawData2 = rawData1.val()
+    data = json.loads(rawData2)
+    data['key'] = key
     if request.method == 'GET':
-        return render_template('create_notice.html', firstName=firstName)
+        return render_template('edit_notice.html', firstName=firstName, notice=data)
     if request.method == 'POST':
         title = request.form.get('title')
         description = request.form.get('description')
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        data = {
+        newData = {
             "title": title,
             "description": description,
-            "creation_date_time": dt_string,
-            "updated_date_time": None
+            "creation_date_time": data['creation_date_time'],
+            "updated_date_time": dt_string
         }
-        firebaseDb.child('noticeBoard').push(json.dumps(data))
-        return render_template('notice_success.html', task='Created', firstName=firstName)
+        firebaseDb.child('noticeBoard').child(key).set(json.dumps(newData))
+        return render_template('notice_success.html', task='Edited', firstName=firstName)
 
 
-@app.route('/notice/edit', methods=['GET', 'POST'])
+@app.route('/notice/delete/<string:key>', methods=['GET'])
 @login_required
 @role_required('admin')
-def edit_notice():
+def deleteNotice(key):
+    firebaseDb.child('noticeBoard').child(key).remove()
+    firstName = session['firstName']
+    return render_template('notice_success.html', task='Deleted', firstName=firstName)
+
+
+@app.route('/user', methods=['GET'])
+@login_required
+@role_required('admin')
+def user():
+    firstName = session['firstName']
+    return render_template('user.html', firstName=firstName)
+
+
+@app.route('/user/add', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def addUser():
     firstName = session['firstName']
     if request.method == 'GET':
-        return render_template('edit_notice.html')
+        return render_template('add_user.html', firstName=firstName)
 
 
 # ----------------- Teacher --------------------
@@ -173,26 +213,27 @@ def teacher_dash():
     notices = firebaseDb.child('noticeBoard').get()
     rawNoticeList = notices.val()
     if rawNoticeList is None:
-        return render_template('admin_dash.html', firstName=firstName, empty=True)
+        return render_template('teacher_dash.html', firstName=firstName, empty=True)
     noticeList = []
     for i in rawNoticeList.values():
         j = json.loads(i)
         noticeList.append(j)
     noticeList.reverse()
     return render_template('teacher_dash.html', firstName=firstName, noticeList=noticeList)
-
-@app.route('/course_teacher', methods=['POST', 'GET'])
-@login_required
-@role_required('teacher')
-def teacher_course():
-    if request.method == 'GET':
-        return render_template('teacher_course_view.html')
-
-    if request.method == 'POST':
-        user_id = session['userId']
-        file = request.files['file']
-        file.os.path.join(app.config['Upload_folder'], secure_filename(file.filename))
-        return render_template('teacher_course_view.html')
+#
+#
+# @app.route('/course_teacher', methods=['POST', 'GET'])
+# @login_required
+# @role_required('teacher')
+# def teacher_course():
+#     if request.method == 'GET':
+#         return render_template('teacher_course_view.html')
+#
+#     if request.method == 'POST':
+#         user_id = session['userId']
+#         file = request.files['file']
+#         file.os.path.join(app.config['Upload_folder'], secure_filename(file.filename))
+#         return render_template('teacher_course_view.html')
 
 
 # ----------------- Student --------------------
@@ -212,6 +253,14 @@ def student_dash():
         noticeList.append(j)
     noticeList.reverse()
     return render_template('student_dash.html', firstName=firstName, noticeList=noticeList)
+    # if request.method == 'GET':
+    #     user_id = session['userId']
+    #     enrollments = Enrollment.query.filter_by(student_id=user_id).all()
+    #     courseList = []
+    #     for enrollment in enrollments:
+    #         course = Course.query.filter_by(id=enrollment.course_id).first()
+    #         courseList.append(course)
+    #     return render_template('student_dash.html', user_id=user_id, courseList=courseList)
 
 
 @app.route('/leave', methods=['GET', 'POST'])
@@ -231,22 +280,14 @@ def student_leave():
         db.session.commit()
         return render_template('leave_applied.html', firstName=firstName)
 
-@app.route('/student/course', methods=['GET','POST'])
-@login_required
-@role_required('student')
-def student_course():
-    if request.method == 'GET':
-        user_id = session['userId']
-        enrollments = Enrollment.query.filter_by(student_id=user_id).all()
-        courseList = []
-        for enrollment in enrollments:
-            course = Course.query.filter_by(id=enrollment.course_id).all()
-            courseList.append(course)
-        return render_template('student_course_view.html', user_id=user_id, courseList=courseList)
-
-    if request.method == 'POST':
-        user_id = session['user_id']
-
+#
+# @app.route('/assignment', methods=['GET', 'POST'])
+# @role_required('student')
+# def student_assignment():
+#     if request.method == 'GET':
+#         user_id = session['id']
+#
+#         return render_template('assignment.html', user_id=user_id)
 
 # ----------------- Course ---------------------
 

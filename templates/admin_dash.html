@@ -27,6 +27,8 @@
                                 - {{ notice['creation_date_time'] }}</h6>
                         {% endif %}
                         <p class="card-text">{{ notice['description'] }}</p>
+                        <a class="btn btn-danger float-end m-3" href="/notice/delete/{{ notice['key'] }}">Delete</a>
+                        <a class="btn btn-warning float-end m-3" href="/notice/edit/{{ notice['key'] }}">Edit</a>
                     </div>
                 </div>
             {% endfor %}

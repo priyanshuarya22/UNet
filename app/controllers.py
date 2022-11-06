@@ -290,3 +290,13 @@ def student_course():
 
 
 # ----------------- Warden ---------------------
+@app.route('warden',methods=['GET','POST'])
+@login_required
+@role_required('warden')
+def warden():
+    if request.method == 'GET':
+        user_id = session['userId']
+        firstName = session['firstname']
+        leaveList = Leave.query.filter_by(status='Pending').all()
+
+        return render_template('warden.html', firstName=firstName, leaveList=leaveList)

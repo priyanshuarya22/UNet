@@ -283,14 +283,6 @@ def student_dash():
         noticeList.append(j)
     noticeList.reverse()
     return render_template('student_dash.html', firstName=firstName, noticeList=noticeList)
-    # if request.method == 'GET':
-    #     user_id = session['userId']
-    #     enrollments = Enrollment.query.filter_by(student_id=user_id).all()
-    #     courseList = []
-    #     for enrollment in enrollments:
-    #         course = Course.query.filter_by(id=enrollment.course_id).first()
-    #         courseList.append(course)
-    #     return render_template('student_dash.html', user_id=user_id, courseList=courseList)
 
 
 @app.route('/leave', methods=['GET', 'POST'])
@@ -310,16 +302,55 @@ def student_leave():
         db.session.commit()
         return render_template('leave_applied.html', firstName=firstName)
 
-#
-# @app.route('/assignment', methods=['GET', 'POST'])
-# @role_required('student')
-# def student_assignment():
-#     if request.method == 'GET':
-#         user_id = session['id']
-#
-#         return render_template('assignment.html', user_id=user_id)
+
+@app.route('/student/course', methods=['GET'])
+@login_required
+@role_required('student')
+def student_course():
+    if request.method == 'GET':
+        user_id = session['userId']
+        firstName = session['firstName']
+        enrollments = Enrollment.query.filter_by(student_id=user_id).all()
+        courseList = []
+        for enrollment in enrollments:
+            course = Course.query.filter_by(id=enrollment.course_id).first()
+            courseList.append(course)
+        return render_template('student_course_view.html', courseList, firstName=firstName)
+
 
 # ----------------- Course ---------------------
 
 
 # ----------------- Warden ---------------------
+@app.route('/warden', methods=['GET'])
+@login_required
+@role_required('warden')
+def warden():
+    if request.method == 'GET':
+        user_id = session['userId']
+        firstName = session['firstname']
+        leaveList = Leave.query.filter_by(status='Pending').all()
+
+        return render_template('warden.html', firstName=firstName, leaveList=leaveList)
+
+
+@app.route('/warden/accept/<int:leave_id>', methods=['GET'])
+@login_required
+@role_required('warden')
+def leave_accept(leave_id):
+    target_leave = Leave.query.filter_by(id=leave_id).first()
+    target_leave.status = 'Accepted'
+    db.session.commit()
+
+    return redirect('/warden')
+
+
+@app.route('/warden/reject/<int:leave_id>', methods=['GET'])
+@login_required
+@role_required('warden')
+def leave_reject(leave_id):
+    target_leave = Leave.query.filter_by(id=leave_id).first()
+    target_leave.status = 'Rejected'
+    db.session.commit()
+
+    return redirect('/warden')

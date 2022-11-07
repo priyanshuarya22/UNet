@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Warden Dashboard{% endblock %}
+
+{% block body %}
+    <!-------- top navbar ------->
+
+    <nav class="navbar navbar-dark navbar-expand-lg bg-dark sticky-top">
+        <div class="container-fluid">
+            <div class="bd-navbar-toggle d-xxl-none d-xxl-block d-xl-none d-lg-none d-xl-block d-md-none d-lg-block">
+                <button class="navbar-toggler p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#bdSidebar"
+                        aria-controls="bdSidebar" aria-label="Toggle docs navigation">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi" fill="currentColor"
+                         viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                              d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
+                    </svg>
+
+                    <span class="d-none fs-6 pe-1">Browse</span>
+                </button>
+            </div>
+            <span class="navbar-brand justify-content-start">
+                <img src="{{ url_for('static', filename='logo_text.png') }}" alt="UNet Logo" width="70px" height="35px">
+             </span>
+            <div class="text-light d-none d-sm-block d-sm-none d-md-block position-absolute top-50 start-50 translate-middle">
+                <h4>Warden Dashboard</h4>
+            </div>
+            <div class="nav-item dropdown justify-content-end text-light pe-3">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    {{ firstName }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!------side bar-------->
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="bd-sidebar d-flex flex-column flex-shirk-0 p-3">
+                    <div class="offcanvas-md offcanvas-start" tabindex="-1" id="bdSidebar"
+                         aria-labelledby="bdSidebarOffcanvasLabel">
+                        <div class="offcanvas-header border-bottom">
+                            <h5 class="offcanvas-title" id="bdSidebarOffcanvasLabel">Browse links</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"
+                                    data-bs-target="#bdSidebar"></button>
+                        </div>
+
+                        <div class="offcanvas-body">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td>
+                                        <a href="/warden" class="btn {% block home %}btn-outline-dark{% endblock %}"
+                                           style="width: 100%;">Home</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

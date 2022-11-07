@@ -200,6 +200,34 @@ def addUser():
     firstName = session['firstName']
     if request.method == 'GET':
         return render_template('add_user.html', firstName=firstName)
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        firstname = request.form.get('firstName')
+        lastname = request.form.get('lastName')
+        pno = request.form.get('pno')
+        email = request.form.get('email')
+        role = request.form.get('role')
+        print(role)
+        roleObj = Role.query.filter_by(name=role).first()
+        bytePwd = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashedPwd = bcrypt.hashpw(bytePwd, salt)
+        user = User(username=username, password=hashedPwd, firstName=firstname, lastName=lastname, pno=pno, email=email)
+        db.session.add(user)
+        db.session.commit()
+        userRole = UserRole(user_id=user.id, role_id=roleObj.id)
+        db.session.add(userRole)
+        db.session.commit()
+        return render_template('user_success.html', task='Created', firstName=firstName)
+
+
+@app.route('/user/modify', methods=['GET'])
+@login_required
+@role_required('admin')
+def modifyUser():
+    firstName = session['firstName']
+    return render_template('modify_user.html', firstName=firstName)
 
 
 # ----------------- Teacher --------------------
@@ -220,6 +248,8 @@ def teacher_dash():
         noticeList.append(j)
     noticeList.reverse()
     return render_template('teacher_dash.html', firstName=firstName, noticeList=noticeList)
+
+
 #
 #
 # @app.route('/course_teacher', methods=['POST', 'GET'])

@@ -316,6 +316,7 @@ def leave_accept(leave_id):
 
     return redirect('/warden')
 
+
 @app.route('warden/reject/<int:leave_id>', methods=['GET'])
 @login_required
 @role_required('warden')

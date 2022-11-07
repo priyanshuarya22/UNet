@@ -2,45 +2,32 @@
 
 {% block content %}
 
-    <h1 style="text-align: center">Leave Applications</h1>
-    <ul class="list-group list-group-flush" id="leave">
-        {% for leave in leaveList %}
-            {% student = User.query.filter_by(id=leave.student_id).first() %}
-            <li class="list-group-item">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    { student.firstName student.lastName}
-                                </div>
-                                <div class="card-body">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                {leave.reason}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                {leave.from_date}
-                                            </div>
-                                            <div class="col-sm-6">
-                                                {leave.to_date}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <button type="button" class="btn btn-success" onClick="leave(accept,leave)">ACCEPT</button>
-                                    <button type="button" class="btn btn-danger" onClick="leave(reject,leave)">REJECT</button>
-                                </div>
-                            </div>
-                        </div>
+    <div class="m-3">
+        {% if empty %}
+            <div class="container mt-5 mb-5">
+                <div class="row">
+                    <div class="col-md-9">
+                        <img src="{{ url_for('static', filename='empty.jpg') }}" width="100%;">
+                    </div>
+                    <div class="col-md-3">
+                        <p class="display-4 mt-5">No pending leave applications.</p>
                     </div>
                 </div>
-            </li>
-        {% endfor %}
-    </ul>
+            </div>
+        {% else %}
+            {% for leave in leaveList %}
+                <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
+                    <div class="card-body">
+                    {% student = User.query.filter_by(id=leave.student_id) %}
+                        <h1 class="card-title">{{ student.firstName student.lastName }}</h1>
+                            <h6 class="card-subtitle mb-2 text-muted">From - {{ leave.from_date }} To - {{ leave.to_date }}</h6>
+                        <p class="card-text">{{ leave.reason }}</p>
+                        <a class="btn btn-danger float-end m-3" href="/warden/accept/{{ leave.id }}">Accpet</a>
+                        <a class="btn btn-warning float-end m-3" href="/warden/reject/{{ leave.id }}">Reject</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 
 {% endblock %}

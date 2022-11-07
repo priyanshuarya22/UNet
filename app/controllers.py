@@ -320,7 +320,7 @@ def leave_accept(leave_id):
 @app.route('/warden/reject/<int:leave_id>', methods=['GET'])
 @login_required
 @role_required('warden')
-def leave_accept(leave_id):
+def leave_reject(leave_id):
     target_leave = Leave.query.filter_by(id=leave_id).first()
     target_leave.status = 'Rejected'
     db.session.commit()

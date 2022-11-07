@@ -18,12 +18,11 @@
             {% for leave in leaveList %}
                 <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
                     <div class="card-body">
-                    {% student = User.query.filter_by(id=leave.student_id) %}
-                        <h1 class="card-title">{{ student.firstName }} {{ student.lastName }}</h1>
+                        <h1 class="card-title">{{ leave_dict[leave.id] }}</h1>
                             <h6 class="card-subtitle mb-2 text-muted">From - {{ leave.from_date }} To - {{ leave.to_date }}</h6>
                         <p class="card-text">{{ leave.reason }}</p>
-                        <a class="btn btn-danger float-end m-3" href="/warden/accept/{{ leave.id }}">Accpet</a>
-                        <a class="btn btn-warning float-end m-3" href="/warden/reject/{{ leave.id }}">Reject</a>
+                        <a class="btn btn-danger float-end m-3" href="/warden/reject/{{ leave.id }}">Reject</a>
+                        <a class="btn btn-warning float-end m-3" href="/warden/accept/{{ leave.id }}">Accept</a>
                     </div>
                 </div>
             {% endfor %}

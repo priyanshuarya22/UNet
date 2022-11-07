@@ -314,7 +314,7 @@ def student_course():
         for enrollment in enrollments:
             course = Course.query.filter_by(id=enrollment.course_id).first()
             courseList.append(course)
-        return render_template('student_course_view.html', courseList, firstName=firstName)
+        return render_template('student_course_view.html', courseList=courseList, firstName=firstName)
 
 
 # ----------------- Course ---------------------
@@ -326,11 +326,15 @@ def student_course():
 @role_required('warden')
 def warden():
     if request.method == 'GET':
-        user_id = session['userId']
-        firstName = session['firstname']
+        firstName = session['firstName']
         leaveList = Leave.query.filter_by(status='Pending').all()
+        leave_dict = dict()
+        for leave in leaveList:
+            student = User.query.filter_by(id=leave.student_id).first()
+            leave_id=leave.id
+            leave_dict[leave_id] = student.firstName + " " + student.lastName
 
-        return render_template('warden.html', firstName=firstName, leaveList=leaveList)
+        return render_template('warden.html', firstName=firstName, leave_dict=leave_dict, leaveList=leaveList)
 
 
 @app.route('/warden/accept/<int:leave_id>', methods=['GET'])

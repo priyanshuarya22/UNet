@@ -275,7 +275,7 @@ def student_leave():
         return render_template('leave_applied.html', firstName=firstName)
 
 
-@app.route('student/course', methods=['GET'])
+@app.route('/student/course', methods=['GET'])
 @login_required
 @role_required('student')
 def student_course():
@@ -294,7 +294,7 @@ def student_course():
 
 
 # ----------------- Warden ---------------------
-@app.route('warden', methods=['GET'])
+@app.route('/warden', methods=['GET'])
 @login_required
 @role_required('warden')
 def warden():
@@ -306,7 +306,7 @@ def warden():
         return render_template('warden.html', firstName=firstName, leaveList=leaveList)
 
 
-@app.route('warden/accept/<int:leave_id>', methods=['GET'])
+@app.route('/warden/accept/<int:leave_id>', methods=['GET'])
 @login_required
 @role_required('warden')
 def leave_accept(leave_id):
@@ -317,7 +317,7 @@ def leave_accept(leave_id):
     return redirect('/warden')
 
 
-@app.route('warden/reject/<int:leave_id>', methods=['GET'])
+@app.route('/warden/reject/<int:leave_id>', methods=['GET'])
 @login_required
 @role_required('warden')
 def leave_accept(leave_id):

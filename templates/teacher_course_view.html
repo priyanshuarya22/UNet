@@ -1,12 +1,28 @@
-<html lang="eng">
+{% extends 'base_teacher.html' %}
+{% block content %}
+    <div class="m-3">
+        {% if empty %}
+            <div class="container mt-5 mb-5">
+                <div class="row">
+                    <div class="col-md-9">
+                        <img src="{{ url_for('static', filename='empty.jpg') }}" width="100%;">
+                    </div>
+                    <div class="col-md-3">
+                        <p class="display-4 mt-5">Wait for course(s) to be assigned.</p>
+                    </div>
+                </div>
+            </div>
+         {% else %}
+            {% for course in courseList %}
+                <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
+                    <div class="card-body">
+                        <h1 class="card-title">{{ course.code }}</h1>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ course.name }}</h6>
+                        <p class="card-text">{{ course.description }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}
 
-<head>
-
-</head>
-<body>
-<form action="teacher_course_view.html" method="post">
-    <input type="file" name="file-name">
-    <button type="submit"></button>
-</form>
-</body>
-</html>

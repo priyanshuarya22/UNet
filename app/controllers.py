@@ -250,20 +250,19 @@ def teacher_dash():
     return render_template('teacher_dash.html', firstName=firstName, noticeList=noticeList)
 
 
-#
-#
-# @app.route('/course_teacher', methods=['POST', 'GET'])
-# @login_required
-# @role_required('teacher')
-# def teacher_course():
-#     if request.method == 'GET':
-#         return render_template('teacher_course_view.html')
-#
-#     if request.method == 'POST':
-#         user_id = session['userId']
-#         file = request.files['file']
-#         file.os.path.join(app.config['Upload_folder'], secure_filename(file.filename))
-#         return render_template('teacher_course_view.html')
+@app.route('/teacher/course', methods=['GET'])
+@login_required
+@role_required('teacher')
+def teacher_course():
+    if request.method == 'GET':
+        user_id = session['userId']
+        firstName = session['firstName']
+        instructors = Instructor.query.filter_by(teacher_id=user_id).all()
+        courseList = []
+        for instructor in instructors:
+            course = Course.query.filter_by(id=instructor.course_id).first()
+            courseList.append(course)
+        return render_template('teacher_course_view.html', courseList=courseList, firstName=firstName)
 
 
 # ----------------- Student --------------------

@@ -284,7 +284,20 @@ def student_dash():
     return render_template('student_dash.html', firstName=firstName, noticeList=noticeList)
 
 
-@app.route('/leave', methods=['GET', 'POST'])
+@app.route('/leave', methods=['GET'])
+@login_required
+@role_required('student')
+def student_leave_applied():
+    firstName = session['firstName']
+    applied_leave = Leave.query.filter_by(student_id=session['userId']).all()
+    appliedList = []
+    for leave in applied_leave:
+        appliedList.append(leave)
+    appliedList.reverse()
+    return render_template('leave_applications.html', firstName=firstName, appliedList=appliedList)
+
+
+@app.route('/leave/apply', methods=['GET', 'POST'])
 @login_required
 @role_required('student')
 def student_leave():
@@ -319,8 +332,17 @@ def student_course():
 
 # ----------------- Course ---------------------
 
+@app.route('/student/course/<string:course_id>', methods=['GET'])
+@login_required
+@role_required('student')
+def student_assignment(course_id):
+    firstName = session['firstName']
+    rawData = firebaseDb.child('assignment').child(course_id).get()
+    assignments = rawData.val()
+
 
 # ----------------- Warden ---------------------
+
 @app.route('/warden', methods=['GET'])
 @login_required
 @role_required('warden')
@@ -331,10 +353,13 @@ def warden():
         leave_dict = dict()
         for leave in leaveList:
             student = User.query.filter_by(id=leave.student_id).first()
-            leave_id=leave.id
+            leave_id = leave.id
             leave_dict[leave_id] = student.firstName + " " + student.lastName
 
-        return render_template('warden.html', firstName=firstName, leave_dict=leave_dict, leaveList=leaveList)
+        status = session.get('status', None)
+        print(status)
+        return render_template('warden.html', firstName=firstName, leave_dict=leave_dict, leaveList=leaveList,
+                               status=status)
 
 
 @app.route('/warden/accept/<int:leave_id>', methods=['GET'])
@@ -343,6 +368,7 @@ def warden():
 def leave_accept(leave_id):
     target_leave = Leave.query.filter_by(id=leave_id).first()
     target_leave.status = 'Accepted'
+    session['status'] = 'Accepted'
     db.session.commit()
 
     return redirect('/warden')
@@ -354,6 +380,7 @@ def leave_accept(leave_id):
 def leave_reject(leave_id):
     target_leave = Leave.query.filter_by(id=leave_id).first()
     target_leave.status = 'Rejected'
+    session['status'] = 'Rejected'
     db.session.commit()
 
     return redirect('/warden')

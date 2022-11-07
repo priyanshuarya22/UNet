@@ -19,13 +19,26 @@
                 <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
                     <div class="card-body">
                         <h1 class="card-title">{{ leave_dict[leave.id] }}</h1>
-                            <h6 class="card-subtitle mb-2 text-muted">From - {{ leave.from_date }} To - {{ leave.to_date }}</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">From - {{ leave.from_date }} To
+                            - {{ leave.to_date }}</h6>
                         <p class="card-text">{{ leave.reason }}</p>
                         <a class="btn btn-danger float-end m-3" href="/warden/reject/{{ leave.id }}">Reject</a>
                         <a class="btn btn-success float-end m-3" href="/warden/accept/{{ leave.id }}">Accept</a>
                     </div>
                 </div>
             {% endfor %}
+        {% endif %}
+        {% if status %}
+            <div class="toast align-items-center text-bg-danger border-0 fade show m-3 position-absolute top-0 start-50 translate-middle-x"
+                 role="alert" aria-live="assertive" aria-atomic="true" style="position:absolute; z-index:2">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ status }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Close"></button>
+                </div>
+            </div>
         {% endif %}
     </div>
 

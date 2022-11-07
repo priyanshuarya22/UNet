@@ -1,0 +1,38 @@
+{% extends 'base_student.html' %}
+
+{% block leave %}btn-dark{% endblock %}
+
+{% block content %}
+    <div class="m-3">
+    <a href="/leave/apply" class="btn btn-primary mb-3">Apply Leave Application.</a>
+        {% if empty %}
+            <div class="container mt-5 mb-5">
+                <div class="row">
+                    <div class="col-md-9">
+                        <img src="{{ url_for('static', filename='empty.jpg') }}" width="100%;">
+                    </div>
+                    <div class="col-md-3">
+                        <p class="display-4 mt-5">No applied Applications.</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {% for leave in appliedList %}
+                <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="width: 100%;">
+                    <div class="card-body">
+                        {% if leave.status == 'Accepted'%}
+                        <h1 class="card-title text-success">{{ leave.status }}</h1>
+                        {% elif leave.status == 'Rejected' %}
+                        <h1 class="card-title text-danger">{{ leave.status }}</h1>
+                        {% else %}
+                        <h1 class="card-title text-primary">{{ leave.status }}</h1>
+                        {% endif %}
+                        <h6 class="card-subtitle mb-2 text-muted">From - {{ leave.from_date }} To
+                            - {{ leave.to_date }}</h6>
+                        <p class="card-text">{{ leave.reason }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

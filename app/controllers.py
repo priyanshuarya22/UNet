@@ -222,12 +222,46 @@ def addUser():
         return render_template('user_success.html', task='Created', firstName=firstName)
 
 
-@app.route('/user/modify', methods=['GET'])
+@app.route('/user/modify', methods=['POST'])
 @login_required
 @role_required('admin')
 def modifyUser():
     firstName = session['firstName']
-    return render_template('modify_user.html', firstName=firstName)
+    username = request.form.get('username')
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        return render_template('user.html', firstName=firstName, error='Invalid Username!')
+    userRole = UserRole.query.filter_by(user_id=user.id).first()
+    role = Role.query.filter_by(id=userRole.role_id).first()
+    return render_template('modify_user.html', user=user, firstName=firstName, role=role.name)
+
+
+@app.route('/user/edit/<int:user_id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def editUser(user_id):
+    firstName = session['firstName']
+    username = request.form.get('username')
+    firstname = request.form.get('firstName')
+    lastname = request.form.get('lastName')
+    pno = request.form.get('pno')
+    email = request.form.get('email')
+    role = request.form.get('role')
+    user = User.query.filter_by(id=user_id).first()
+    if user.username != username:
+        check = User.query.filter_by(username=username).first()
+        if check is not None:
+            return redirect('') # work to be done here
+    user.username = username
+    user.firstName = firstname
+    user.lastName = lastname
+    user.pno = pno
+    user.email = email
+    roleObj = Role.query.filter_by(name=role).first()
+    userRole = UserRole.query.filter_by(user_id=user_id).first()
+    userRole.role_id = roleObj.id
+    db.session.commit()
+    return render_template('user_success.html', task="Edited", firstName=firstName)
 
 
 # ----------------- Teacher --------------------

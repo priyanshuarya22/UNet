@@ -3,10 +3,22 @@
 {% block user %}btn-dark{% endblock %}
 
 {% block content %}
+    {% if error %}
+        <div class="toast align-items-center text-bg-danger border-0 fade show m-3 position-absolute top-90 start-50 translate-middle-x"
+             role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; z-index: 1;">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ error }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
     <div class="container mt-3">
         <div class="row">
-            <div class="col-md-6">
-                <div class="card mb-3" style="width: 100%;">
+            <div class="col-md-5 d-flex align-items-stretch mb-3">
+                <div class="card" style="width: 100%;">
                     <img src="{{ url_for('static', filename='add_user.jpg') }}" class="card-img-top" alt="add_user">
                     <div class="card-body">
                         <h5 class="card-title">Add User</h5>
@@ -15,13 +27,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card mb-3" style="width: 100%;">
-                    <img src="{{ url_for('static', filename='modify_user.jpg') }}" class="card-img-top" alt="modify_user">
+            <div class="col-md-5 d-flex align-items-stretch mb-3">
+                <div class="card" style="width: 100%;">
+                    <img src="{{ url_for('static', filename='modify_user.jpg') }}" class="card-img-top"
+                         alt="modify_user">
                     <div class="card-body">
                         <h5 class="card-title">Modify User</h5>
-                        <p class="card-text">Click here to modify user.</p>
-                        <a href="/user/modify" class="btn btn-warning float-end">Modify</a>
+                        <form action="/user/modify" method="post">
+                            <label for="username" class="form-label">Enter Username:</label>
+                            <input type="text" class="form-control mb-2" name="username" id="username">
+                            <input type="submit" class="btn btn-warning float-end">
+                        </form>
                     </div>
                 </div>
             </div>

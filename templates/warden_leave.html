@@ -22,8 +22,8 @@
                         <h6 class="card-subtitle mb-2 text-muted">From - {{ leave.from_date }} To
                             - {{ leave.to_date }}</h6>
                         <p class="card-text">{{ leave.reason }}</p>
-                        <a class="btn btn-danger float-end m-3" href="/warden/reject/{{ leave.id }}">Reject</a>
-                        <a class="btn btn-success float-end m-3" href="/warden/accept/{{ leave.id }}">Accept</a>
+                        <a class="btn btn-danger float-end m-3" href="/warden/leave/reject/{{ leave.id }}">Reject</a>
+                        <a class="btn btn-success float-end m-3" href="/warden/leave/accept/{{ leave.id }}">Accept</a>
                     </div>
                 </div>
             {% endfor %}

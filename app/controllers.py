@@ -1,6 +1,8 @@
 import os
 from functools import wraps
 
+import pymysql
+import sqlalchemy
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from app.database import db
@@ -248,20 +250,64 @@ def editUser(user_id):
     email = request.form.get('email')
     role = request.form.get('role')
     user = User.query.filter_by(id=user_id).first()
-    if user.username != username:
+    flag = False
+    if username != user.username:
         check = User.query.filter_by(username=username).first()
         if check is not None:
-            return redirect('') # work to be done here
-    user.username = username
+            flag = True
+        else:
+            user.username = username
     user.firstName = firstname
     user.lastName = lastname
     user.pno = pno
     user.email = email
+    if flag:
+        return render_template('modify_user.html', user=user, role=role, firstName=firstName,
+                               error='Username already exist!')
     roleObj = Role.query.filter_by(name=role).first()
     userRole = UserRole.query.filter_by(user_id=user_id).first()
     userRole.role_id = roleObj.id
     db.session.commit()
     return render_template('user_success.html', task="Edited", firstName=firstName)
+
+
+@app.route('/user/delete/<int:user_id>', methods=['GET'])
+@login_required
+@role_required('admin')
+def deleteUser(user_id):
+    firstName = session['firstName']
+    enrollments = Enrollment.query.filter_by(student_id=user_id).all()
+    for enrollment in enrollments:
+        db.session.delete(enrollment)
+    instructors = Instructor.query.filter_by(teacher_id=user_id).all()
+    for instructor in instructors:
+        db.session.delete(instructor)
+    leaves = Leave.query.filter_by(student_id=user_id).all()
+    for leave in leaves:
+        db.session.delete(leave)
+    userRole = UserRole.query.filter_by(user_id=user_id).first()
+    db.session.delete(userRole)
+    user = User.query.filter_by(id=user_id).first()
+    db.session.delete(user)
+    db.session.commit()
+    return render_template('user_success.html', task='Deleted', firstName=firstName)
+
+
+@app.route('/admin/course', methods=['GET'])
+@login_required
+@role_required('admin')
+def adminCourse():
+    firstName = session['firstName']
+    return render_template('admin_course.html', firstName=firstName)
+
+
+@app.route('/admin/course/add', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def addCourse():
+    firstName = session['firstName']
+    if request.method == 'GET':
+        return render_template('add_course.html', firstName=firstName)
 
 
 # ----------------- Teacher --------------------

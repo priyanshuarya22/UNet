@@ -1,6 +1,6 @@
 {% extends 'base_admin.html' %}
 
-{% block user %}btn-dark{% endblock %}
+{% block course %}btn-dark{% endblock %}
 
 {% block content %}
     {% if error %}
@@ -19,23 +19,23 @@
         <div class="row">
             <div class="col-md-5 d-flex align-items-stretch mb-3">
                 <div class="card" style="width: 100%;">
-                    <img src="{{ url_for('static', filename='add.jpg') }}" class="card-img-top" alt="add_user">
+                    <img src="{{ url_for('static', filename='add.jpg') }}" class="card-img-top" alt="add_course">
                     <div class="card-body">
-                        <h5 class="card-title">Add User</h5>
-                        <p class="card-text">Click here to add user.</p>
-                        <a href="/user/add" class="btn btn-success float-end">Add</a>
+                        <h5 class="card-title">Add Course</h5>
+                        <p class="card-text">Click here to add course.</p>
+                        <a href="/admin/course/add" class="btn btn-success float-end">Add</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-5 d-flex align-items-stretch mb-3">
                 <div class="card" style="width: 100%;">
                     <img src="{{ url_for('static', filename='modify.jpg') }}" class="card-img-top"
-                         alt="modify_user">
+                         alt="modify_course">
                     <div class="card-body">
-                        <h5 class="card-title">Modify User</h5>
-                        <form action="/user/modify" method="post">
-                            <label for="username" class="form-label">Enter Username:</label>
-                            <input type="text" class="form-control mb-2" name="username" id="username">
+                        <h5 class="card-title">Modify Course</h5>
+                        <form action="admin/course/modify" method="post">
+                            <label for="code" class="form-label">Enter Course Code:</label>
+                            <input type="text" class="form-control mb-2" name="code" id="code">
                             <input type="submit" class="btn btn-warning float-end">
                         </form>
                     </div>

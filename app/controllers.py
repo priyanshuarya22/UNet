@@ -345,6 +345,48 @@ def teacher_course():
         return render_template('teacher_course_view.html', courseList=courseList, firstName=firstName)
 
 
+@app.route('/teacher/course/<string:course_code>', methods=['GET'])
+@login_required
+@role_required('teacher')
+def teacher_course_dash(course_code):
+    firstName = session['firstName']
+    if request.method == 'GET':
+        notices = firebaseDb.child('courseBoard').child(course_code).get()
+        rawnoticelist = notices.val()
+        noticeList = []
+        for i in rawnoticelist.values():
+            j = json.loads(i)
+            noticeList.append(j)
+        noticeList.reverse()
+
+        return render_template('course_teacher_dash.html', firstName=firstName, course_code=course_code,
+                               noticeList=noticeList)
+
+@app.route('/teacher/course/<string:course_code>/notice', methods=['GET'])
+@login_required
+@role_required('teacher')
+def notice():
+    firstName = session['firstName']
+    return render_template('course_create_notice.html', firstName=firstName)
+
+
+@app.route('/teacher/course/<string:course_code>/notice/create', methods=['GET'])
+@login_required
+@role_required('teacher')
+def course_create_notice(course_code):
+    firstName=session['firstName']
+    title = request.form.get('title')
+    description = request.form.get('description')
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    data = {
+        "title": title,
+        "description": description,
+        "creation_date_time": dt_string,
+        "updated_date_time": None
+    }
+    firebaseDb.child('noticeBoard').push(json.dumps(data))
+    return render_template('notice_success.html', task='Created', firstName=firstName)
 
 
 # ----------------- Student --------------------
@@ -439,8 +481,6 @@ def warden():
         noticeList.append(j)
     noticeList.reverse()
     return render_template('warden_dash.html', firstName=firstName, noticeList=noticeList)
-
-
 
 
 @app.route('/warden/leave', methods=['GET'])

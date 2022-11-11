@@ -105,6 +105,14 @@ def redirector():
         return 404
 
 
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    del session['username']
+    del session['role']
+    return redirect('/')
+
+
 # ----------------- Admin ----------------------
 
 @app.route('/admin', methods=['GET'])
@@ -190,7 +198,7 @@ def deleteNotice(key):
 @app.route('/user', methods=['GET'])
 @login_required
 @role_required('admin')
-def user():
+def userPage():
     firstName = session['firstName']
     return render_template('user.html', firstName=firstName)
 
@@ -201,7 +209,8 @@ def user():
 def addUser():
     firstName = session['firstName']
     if request.method == 'GET':
-        return render_template('add_user.html', firstName=firstName)
+        courses = Course.query.all()
+        return render_template('add_user.html', firstName=firstName, courses=courses)
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -210,7 +219,9 @@ def addUser():
         pno = request.form.get('pno')
         email = request.form.get('email')
         role = request.form.get('role')
-        print(role)
+        check = User.query.filter_by(username=username).first()
+        if check is not None:
+            return render_template('add_user.html', firstName=firstName, error='Username already exist!')
         roleObj = Role.query.filter_by(name=role).first()
         bytePwd = password.encode('utf-8')
         salt = bcrypt.gensalt()
@@ -306,8 +317,59 @@ def adminCourse():
 @role_required('admin')
 def addCourse():
     firstName = session['firstName']
+    teachers = []
     if request.method == 'GET':
-        return render_template('add_course.html', firstName=firstName)
+        role = Role.query.filter_by(name='Teacher').first()
+        userRoles = UserRole.query.filter_by(role_id=role.id).all()
+        for userRole in userRoles:
+            user = User.query.filter_by(id=userRole.user_id).first()
+            teacher = {
+                'id': user.id,
+                'name': user.firstName + ' ' + user.lastName
+            }
+            teachers.append(teacher)
+        return render_template('add_course.html', firstName=firstName, teachers=teachers)
+    if request.method == 'POST':
+        code = request.form.get('code')
+        name = request.form.get('name')
+        description = request.form.get('description')
+        teacher = request.form.get('teacher')
+        check = Course.query.filter_by(code=code).first()
+        if check is not None:
+            return render_template('add_course.html', firstName=firstName, teachers=teachers,
+                                   error='Course Code already exist!')
+        course = Course(code=code, name=name, description=description)
+        db.session.add(course)
+        db.session.commit()
+        instructor = Instructor(teacher_id=teacher, course_id=course.id)
+        db.session.add(instructor)
+        db.session.commit()
+        return render_template('course_success.html', task='Created', firstName=firstName)
+
+
+@app.route('/admin/course/modify', methods=['POST'])
+@login_required
+@role_required('admin')
+def adminCourseModify():
+    firstName = session['firstName']
+    code = request.form.get('code')
+    course = Course.query.filter_by(code=code).first()
+    if course is None:
+        return render_template('admin_course.html', firstName=firstName, error='Course does not exist!')
+    teachers = []
+    role = Role.query.filter_by(name='Teacher').first()
+    userRoles = UserRole.query.filter_by(role_id=role.id).all()
+    for userRole in userRoles:
+        user = User.query.filter_by(id=userRole.user_id).first()
+        teacher = {
+            'id': user.id,
+            'name': user.firstName + ' ' + user.lastName
+        }
+        teachers.append(teacher)
+    instructor = Instructor.query.filter_by(course_id=course.id).first()
+    instructorId = instructor.teacher_id
+    return render_template('modify_course.html', firstName=firstName, course=course, teachers=teachers,
+                           instructorId=instructorId)
 
 
 # ----------------- Teacher --------------------
@@ -343,50 +405,6 @@ def teacher_course():
             course = Course.query.filter_by(id=instructor.course_id).first()
             courseList.append(course)
         return render_template('teacher_course_view.html', courseList=courseList, firstName=firstName)
-
-
-@app.route('/teacher/course/<string:course_code>', methods=['GET'])
-@login_required
-@role_required('teacher')
-def teacher_course_dash(course_code):
-    firstName = session['firstName']
-    if request.method == 'GET':
-        notices = firebaseDb.child('courseBoard').child(course_code).get()
-        rawnoticelist = notices.val()
-        noticeList = []
-        for i in rawnoticelist.values():
-            j = json.loads(i)
-            noticeList.append(j)
-        noticeList.reverse()
-
-        return render_template('course_teacher_dash.html', firstName=firstName, course_code=course_code,
-                               noticeList=noticeList)
-
-@app.route('/teacher/course/<string:course_code>/notice', methods=['GET'])
-@login_required
-@role_required('teacher')
-def notice():
-    firstName = session['firstName']
-    return render_template('course_create_notice.html', firstName=firstName)
-
-
-@app.route('/teacher/course/<string:course_code>/notice/create', methods=['GET'])
-@login_required
-@role_required('teacher')
-def course_create_notice(course_code):
-    firstName=session['firstName']
-    title = request.form.get('title')
-    description = request.form.get('description')
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    data = {
-        "title": title,
-        "description": description,
-        "creation_date_time": dt_string,
-        "updated_date_time": None
-    }
-    firebaseDb.child('noticeBoard').push(json.dumps(data))
-    return render_template('notice_success.html', task='Created', firstName=firstName)
 
 
 # ----------------- Student --------------------

@@ -1,7 +1,20 @@
 {% extends 'base_warden.html' %}
 
-{% block content %}
+{% block leave %}btn-dark{% endblock %}
 
+{% block content %}
+    {% if status %}
+        <div class="toast align-items-center text-bg-danger border-0 fade show m-3 position-absolute top-0 start-50 translate-middle-x"
+             role="alert" aria-live="assertive" aria-atomic="true" style="position:absolute; z-index:2">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ status }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
     <div class="m-3">
         {% if empty %}
             <div class="container mt-5 mb-5">
@@ -28,18 +41,5 @@
                 </div>
             {% endfor %}
         {% endif %}
-        {% if status %}
-            <div class="toast align-items-center text-bg-danger border-0 fade show m-3 position-absolute top-0 start-50 translate-middle-x"
-                 role="alert" aria-live="assertive" aria-atomic="true" style="position:absolute; z-index:2">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ status }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                            aria-label="Close"></button>
-                </div>
-            </div>
-        {% endif %}
     </div>
-
 {% endblock %}

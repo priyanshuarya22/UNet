@@ -3,6 +3,18 @@
 {% block user %}btn-dark{% endblock %}
 
 {% block content %}
+    {% if error %}
+        <div class="toast align-items-center text-bg-danger border-0 fade show m-3 position-absolute top-90 start-50 translate-middle-x"
+             role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; z-index: 1;">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ error }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
     <div class="container mt-3">
         <form class="row" action="/user/add" method="post">
             <div class="col-md-12 mb-3">
@@ -37,12 +49,21 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label for="role" class="form-label">Select Role:</label>
-                <select id="role" name="role" class="form-select" required>
+                <select id="role" name="role" class="form-select"
+                        onchange="displayCourseSelector('courseSelector', this)" required>
                     <option selected disabled value="">Select One</option>
                     <option value="admin">Admin</option>
                     <option value="teacher">Teacher</option>
                     <option value="student">Student</option>
                     <option value="warden">Warden</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3" id="courseSelector" style="display: none">
+                <label for="course" class="form-label">Select Courses:</label>
+                <select id="course" name="course" class="form-select" multiple>
+                    {% for course in courses %}
+                        <option value="{{ course.id }}">{{ course.code }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="col-md-12 mb-3">
@@ -61,6 +82,10 @@
                 document.getElementById('error').innerHTML = '';
                 document.getElementById('submit').disabled = false;
             }
+        }
+
+        function displayCourseSelector(id, elementValue) {
+            document.getElementById(id).style.display = elementValue.value === 'student' ? 'block' : 'none';
         }
     </script>
 {% endblock %}

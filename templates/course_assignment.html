@@ -1,0 +1,55 @@
+{% extends 'base_teacher_course.html' %}
+
+{% block assignment %}btn-dark{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-12 mb-5">
+                <a href="/teacher/course/{{ course.id }}/assignment/create" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"></path>
+                    </svg>
+                    Create Assignment
+                </a>
+            </div>
+            {% if empty %}
+                <div class="container mt-5 mb-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="{{ url_for('static', filename='empty.jpg') }}" width="100%;" alt="empty image">
+                        </div>
+                        <div class="col-md-6">
+                            <p class="display-4 mt-5">No Assignments Posted.</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {% for assignment in assignments %}
+                    <div class="col-md-12 d-flex align-items-stretch">
+                        <div class="card shadow p-3 mb-5 bg-body rounded" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ assignment['title'] }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    {% if assignment['editedOn'] %}
+                                        EditedOn: {{ assignment['editedOn'] }}
+                                    {% else %}
+                                        Created On: {{ assignment['createdOn'] }}
+                                    {% endif %}
+                                    <span class="text-danger">Deadline: {{ assignment['deadline'] }}</span>
+                                </h6>
+                                <p class="card-text">{{ assignment['description'] }}</p>
+                                <a href="{{ assignment['link'] }}" class="card-link">{{ assignment['link'] }}</a>
+                                <a href="/teacher/course/{{ course.id }}/assignment/{{ assignment['key'] }}"
+                                   class="btn btn-primary float-end mt-3">View Assignment</a>
+                                <a href="/teacher/course/{{ course.id }}/assignment/{{ assignment['key'] }}/submissions"
+                                   class="btn btn-success float-end mt-3 me-3">View Submissions</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

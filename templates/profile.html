@@ -1,8 +1,28 @@
-{% extends 'base_admin.html' %}
+{% if role == 'admin' %}
+    {% extends 'base_admin.html' %}
+{% elif role == 'teacher' %}
+    {% extends 'base_teacher.html' %}
+{% elif role == 'student' %}
+    {% extends 'base_student.html' %}
+{% else %}
+    {% extends 'base_warden.html' %}
+{% endif %}
 
-{% block user %}btn-dark{% endblock %}
+{% block home %}btn-dark{% endblock %}
 
 {% block content %}
+    {% if info %}
+        <div class="toast align-items-center text-bg-info border-0 fade show m-3 position-absolute top-90 start-50 translate-middle-x"
+             role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; z-index: 1;">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ info }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
     {% if error %}
         <div class="toast align-items-center text-bg-danger border-0 fade show m-3 position-absolute top-90 start-50 translate-middle-x"
              role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; z-index: 1;">
@@ -16,7 +36,8 @@
         </div>
     {% endif %}
     <div class="container mt-3">
-        <form class="row" action="/user/edit/{{ user.id }}" method="post">
+        <h1 class="mb-3">Edit Profile</h1>
+        <form class="row" action="/profile" method="post">
             <div class="col-md-12 mb-3">
                 <label for="username" class="form-label">Enter UserName</label>
                 <input type="text" name="username" id="username" class="form-control" value="{{ user.username }}" required>
@@ -37,44 +58,10 @@
                 <label for="email" class="form-label">Enter Email</label>
                 <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}">
             </div>
-            <div class="col-md-6 mb-3">
-                <label for="role" class="form-label">Select Role:</label>
-                <select id="role" name="role" class="form-select"
-                        onchange="displayCourseSelector('courseSelector', this)" required>
-                    <option selected disabled value="">Select One</option>
-                    <option id="admin" value="admin">Admin</option>
-                    <option id="teacher" value="teacher">Teacher</option>
-                    <option id="student" value="student">Student</option>
-                    <option id="warden" value="warden">Warden</option>
-                </select>
-            </div>
-            <div class="col-md-6 mb-3" id="courseSelector" style="display: none">
-                <label for="course" class="form-label">Select Courses:</label>
-                <select id="course" name="course" class="form-select" multiple>
-                    {% for course in courses %}
-                        <option value="{{ course.id }}" id="{{ course.id }}">{{ course.code }}</option>
-                    {% endfor %}
-                </select>
-            </div>
             <div class="col-md-12 mb-3">
-                <a href="/user/delete/{{ user.id }}" class="btn btn-danger float-end">Delete</a>
-                <input type="submit" id="submit" class="btn btn-success float-end me-3">
+                <a href="/profile/changePassword" class="btn btn-primary float-end">Change Password</a>
+                <input type="submit" id="submit" class="btn btn-warning float-end me-3" value="Edit">
             </div>
         </form>
     </div>
-    <script>
-        document.getElementById('{{ role }}').selected = true;
-
-        function displayCourseSelector(id, elementValue) {
-            document.getElementById(id).style.display = elementValue.value === 'student' ? 'block' : 'none';
-        }
-
-        {% if role == 'student' %}
-            document.getElementById('courseSelector').style.display = 'block';
-        {% endif %}
-
-        {% for enrollment in enrollments %}
-            document.getElementById('{{ enrollment }}').selected = true;
-        {% endfor %}
-    </script>
 {% endblock %}

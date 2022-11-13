@@ -1,0 +1,30 @@
+{% extends 'base_teacher_course.html' %}
+
+{% block assignment %}btn-dark{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <h1 class="mb-3">Create Assignment</h1>
+        <form action="/teacher/course/{{ course.id }}/assignment/create" method="post" class="row">
+            <div class="col-md-12 mb-3">
+                <label for="title" class="form-label">Enter Title</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label for="deadline" class="form-label">Enter Deadline</label>
+                <input type="date" id="deadline" name="deadline" class="form-control">
+            </div>
+            <div class="col-md-12 mb-3">
+                <label for="description" class="form-label">Enter Description</label>
+                <textarea name="description" id="description" rows="8" class="form-control w-100" required></textarea>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label for="link" class="form-label">Enter Link</label>
+                <input type="text" id="link" name="link" class="form-control">
+            </div>
+            <div class="col-md-12 mb-3">
+                <input type="submit" class="btn btn-success float-end">
+            </div>
+        </form>
+    </div>
+{% endblock %}

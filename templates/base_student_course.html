@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Student Dashboard{% endblock %}
+{% block title %}{{ course.name }}{% endblock %}
 
 {% block body %}
     <!-------- top navbar ------->
@@ -23,7 +23,7 @@
                 <img src="{{ url_for('static', filename='logo_text.png') }}" alt="UNet Logo" width="70px" height="35px">
              </span>
             <div class="text-light d-none d-sm-block d-sm-none d-md-block position-absolute top-50 start-50 translate-middle">
-                <h4>Student Dashboard</h4>
+                <h4>{{ course.name }}</h4>
             </div>
             <div class="nav-item dropdown justify-content-end text-light pe-3">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -57,7 +57,8 @@
                             <table style="width: 100%;">
                                 <tr>
                                     <td>
-                                        <a href="/student" class="btn {% block home %}btn-outline-dark{% endblock %}"
+                                        <a href="/student/course/{{ course.id }}"
+                                           class="btn {% block home %}btn-outline-dark{% endblock %}"
                                            style="width: 100%;">Home</a>
                                     </td>
                                 </tr>
@@ -66,9 +67,9 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="/student/course"
-                                           class="btn {% block course %}btn-outline-dark{% endblock %}"
-                                           style="width: 100%;">Course</a>
+                                        <a href="/student/course/{{ course.id }}/assignment"
+                                           class="btn {% block assignment %}btn-outline-dark{% endblock %}"
+                                           style="width: 100%;">Assignments</a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -76,9 +77,9 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="/leave"
-                                           class="btn {% block leave %}btn-outline-dark{% endblock %}"
-                                           style="width: 100%;">Leave application</a>
+                                        <a href="/student/course"
+                                           class="btn {% block back %}btn-outline-dark{% endblock %}"
+                                           style="width: 100%;">Go Back</a>
                                     </td>
                                 </tr>
                             </table>

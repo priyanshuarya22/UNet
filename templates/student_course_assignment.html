@@ -1,0 +1,89 @@
+{% extends 'base_student_course.html' %}
+
+{% block assignment %}btn-dark{% endblock %}
+
+{% block content %}
+    {% if info %}
+        <div class="toast align-items-center text-bg-info border-0 fade show m-3 position-absolute top-90 start-50 translate-middle-x"
+             role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; z-index: 1;">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ info }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
+    <div class="container mt-3" xmlns="http://www.w3.org/1999/html">
+        <div class="row">
+            {% if empty %}
+                <div class="container mt-5 mb-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="{{ url_for('static', filename='empty.jpg') }}" width="100%;" alt="empty image">
+                        </div>
+                        <div class="col-md-6">
+                            <p class="display-4 mt-5">No Assignments Posted.</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {% for assignment in assignments %}
+                    <div class="col-md-12 d-flex align-items-stretch">
+                        <div class="card shadow p-3 mb-5 bg-body rounded" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ assignment['title'] }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    {% if assignment['editedOn'] %}
+                                        EditedOn: {{ assignment['editedOn'] }}
+                                    {% else %}
+                                        Created On: {{ assignment['createdOn'] }}
+                                    {% endif %}
+                                    <span class="text-danger">Deadline: {{ assignment['deadline'] }}</span>
+                                </h6>
+                                <p class="card-text">{{ assignment['description'] }}</p>
+                                <a href="{{ assignment['link'] }}" class="card-link">{{ assignment['link'] }}</a>
+                                <button class="btn btn-success float-end mt-3" data-bs-toggle="modal"
+                                        data-bs-target="#submissionForm" data-bs-whatever="{{ assignment['key'] }}"
+                                        {% if assignment['deadlinePassed'] %}disabled{% endif %}>Create Submission
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="modal fade" id="submissionForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Submission Box</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="form" method="post">
+                    <div class="modal-body" id="test">
+                        <label for="link" class="form-label">Enter Link</label>
+                        <input type="text" id="link" name="link" class="form-control" required>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const submissionForm = document.getElementById('submissionForm')
+        if (submissionForm) {
+            submissionForm.addEventListener('show.bs.modal', event => {
+                const button = event.relatedTarget
+                const recipient = button.getAttribute('data-bs-whatever')
+                let actionTemplate = "/student/course/2/assignment/submit/";
+                let action = actionTemplate.concat(recipient);
+                document.getElementById('form').setAttribute('action', action)
+            })
+        }
+    </script>
+{% endblock %}

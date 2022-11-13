@@ -1,0 +1,35 @@
+{% extends 'base_teacher_course.html' %}
+
+{% block assignment %}btn-dark{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="row">
+            {% if empty %}
+                <div class="container mt-5 mb-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="{{ url_for('static', filename='empty.jpg') }}" width="100%;" alt="empty image">
+                        </div>
+                        <div class="col-md-6">
+                            <p class="display-4 mt-5">No Submissions Yet.</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {% for submission in submissions %}
+                    <div class="col-md-12 d-flex align-items-stretch">
+                        <div class="card shadow p-3 mb-5 bg-body rounded" style="width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ submission['name'] }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Submitted
+                                    On: {{ submission['submittedOn'] }}</h6>
+                                <a href="{{ submission['link'] }}" class="card-link">{{ submission['link'] }}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
